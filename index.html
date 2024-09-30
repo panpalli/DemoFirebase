@@ -3,11 +3,11 @@
   <head>
     <title>Firebase Firestore Test</title>
     <script type="module">
-      // Import the functions you need from the SDKs you need
+      // Firebase SDK importları
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-      import { getFirestore, collection, addDoc, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+      import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
-      // Your web app's Firebase configuration
+      // Firebase konfigürasyonu
       const firebaseConfig = {
         apiKey: "AIzaSyB5_j3KQjTRe2k1B_RfOlsvh0qN8JnNFlQ",
         authDomain: "fir-firebase-project-daf7a.firebaseapp.com",
@@ -18,50 +18,45 @@
         measurementId: "G-FRRY2SBMZK"
       };
 
-      // Initialize Firebase
+      // Firebase başlatma
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
-      let lastDocId = null;
 
-      // Function to add data to Firestore
-      async function addData() {
-        try {
-          const docRef = await addDoc(collection(db, "Users"), {
-            name: "Alice",
-            age: 25,
-            city: "Sydney"
-          });
-          console.log("Document written with ID: ", docRef.id);
-          lastDocId = docRef.id; // Son eklenen belgenin ID'sini sakla
-        } catch (e) {
-          console.error("Error adding document: ", e);
-        }
-      }
+      // Veri ekleme fonksiyonu
+      window.addData = async function addData() {
+        const name = document.getElementById("name").value;
+        const city = document.getElementById("city").value;
+        const age = document.getElementById("age").value;
 
-      // Function to read data from Firestore
-      async function readData() {
-        if (lastDocId) {
-          const docRef = doc(db, "Users", lastDocId);
-          const docSnap = await getDoc(docRef);
-
-          if (docSnap.exists()) {
-            console.log("Document data:", docSnap.data());
-          } else {
-            console.log("No such document!");
+        if(name && city && age) { // Değerlerin boş olmadığını kontrol et
+          try {
+            const docRef = await addDoc(collection(db, "Users"), {
+              name: name,
+              city: city,
+              age: parseInt(age)
+            });
+            console.log("Document written with ID: ", docRef.id);
+          } catch (e) {
+            console.error("Error adding document: ", e);
           }
         } else {
-          console.log("No document has been added yet!");
+          console.error("Lütfen tüm alanları doldurun.");
         }
       }
-
-      // addData ve readData fonksiyonlarını global hale getirme
-      window.addData = addData;
-      window.readData = readData;
     </script>
   </head>
   <body>
     <h1>Firebase Firestore Test</h1>
-    <button onclick="addData()">Veri Ekle</button>
-    <button onclick="readData()">Veri Oku</button> <!-- Yeni eklenen buton -->
+
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name"><br><br>
+
+    <label for="city">City:</label>
+    <input type="text" id="city" name="city"><br><br>
+
+    <label for="age">Age:</label>
+    <input type="number" id="age" name="age"><br><br>
+
+    <button onclick="addData()">Add Data</button>
   </body>
 </html>
