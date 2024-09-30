@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Firebase Firestore Test</title>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+      import { getFirestore, collection, addDoc, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyB5_j3KQjTRe2k1B_RfOlsvh0qN8JnNFlQ",
+        authDomain: "fir-firebase-project-daf7a.firebaseapp.com",
+        projectId: "fir-firebase-project-daf7a",
+        storageBucket: "fir-firebase-project-daf7a.appspot.com",
+        messagingSenderId: "758322110504",
+        appId: "1:758322110504:web:fc308f7b3033913187d51d",
+        measurementId: "G-FRRY2SBMZK"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      let lastDocId = null;
+
+      // Function to add data to Firestore
+      async function addData() {
+        try {
+          const docRef = await addDoc(collection(db, "Users"), {
+            name: "Alice",
+            age: 25,
+            city: "Sydney"
+          });
+          console.log("Document written with ID: ", docRef.id);
+          lastDocId = docRef.id; // Son eklenen belgenin ID'sini sakla
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
+      }
+
+      // Function to read data from Firestore
+      async function readData() {
+        if (lastDocId) {
+          const docRef = doc(db, "Users", lastDocId);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            console.log("Document data:", docSnap.data());
+          } else {
+            console.log("No such document!");
+          }
+        } else {
+          console.log("No document has been added yet!");
+        }
+      }
+
+      // addData ve readData fonksiyonlarını global hale getirme
+      window.addData = addData;
+      window.readData = readData;
+    </script>
+  </head>
+  <body>
+    <h1>Firebase Firestore Test</h1>
+    <button onclick="addData()">Veri Ekle</button>
+    <button onclick="readData()">Veri Oku</button> <!-- Yeni eklenen buton -->
+  </body>
+</html>
